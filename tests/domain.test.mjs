@@ -1,0 +1,8 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {formatMrn,hasSlotConflict,canTransitionEncounter,hasCorrectFacilityScope,canEditClinicalNote,DEMO_ONLY} from '../src/lib/domain.mjs';
+test('fixture data must always be marked demo only',()=>assert.equal(DEMO_ONLY,true));
+test('patient identifier formatting',()=>{assert.equal(formatMrn(1),'EMR-00001');assert.equal(formatMrn(102),'EMR-00102');assert.throws(()=>formatMrn(0));assert.throws(()=>formatMrn(-1))});
+test('double-booking rule excludes cancelled slots and other clinicians',()=>{const a=[{id:'a1',practitionerId:'dr-a',date:'2026-10-20',time:'09:00',status:'confirmed'},{id:'a2',practitionerId:'dr-b',date:'2026-10-20',time:'09:00',status:'Cancelled'}];assert.equal(hasSlotConflict(a,{practitionerId:'dr-a',date:'2026-10-20',time:'09:00'}),true);assert.equal(hasSlotConflict(a,{practitionerId:'dr-b',date:'2026-10-20',time:'09:00'}),false);assert.equal(hasSlotConflict(a,{practitionerId:'dr-a',date:'2026-10-20',time:'09:00',excludeId:'a1'}),false)});
+test('clinical lifecycle refuses editing completed notes',()=>{assert.equal(canTransitionEncounter('in-progress','completed'),true);assert.equal(canTransitionEncounter('completed','in-progress'),false);assert.equal(canEditClinicalNote('signed'),false);assert.equal(canEditClinicalNote('draft'),true)});
+test('facility scoping denies empty and mismatching records',()=>{assert.equal(hasCorrectFacilityScope('facility-1','facility-2'),false);assert.equal(hasCorrectFacilityScope('',''),false);assert.equal(hasCorrectFacilityScope('facility-1','facility-1'),true)});

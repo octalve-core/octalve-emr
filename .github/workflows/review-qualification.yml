@@ -1,0 +1,43 @@
+name: EMR review qualification
+on:
+  push:
+    branches: [main, 'review/emr']
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+concurrency:
+  group: emr-review-${{ github.ref }}
+  cancel-in-progress: true
+permissions:
+  contents: read
+jobs:
+  qualify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.18.3
+          run_install: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+      - name: Require reviewed lockfile
+        run: test -s pnpm-lock.yaml || { echo 'Missing pnpm-lock.yaml. Generate and commit lockfile before releasing.'; exit 1; }
+      - name: Frozen dependency install
+        run: pnpm install --frozen-lockfile
+      - name: Clinical contract tests
+        run: pnpm test
+      - name: TypeScript validation
+        run: pnpm typecheck
+      - name: ESLint
+        run: pnpm lint
+      - name: Review build (pinned official temporary icon/wordmark)
+        run: pnpm build
+      - name: Confirm clinical APIs remain disabled
+        run: node --test tests/*.test.mjs

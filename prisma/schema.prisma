@@ -1,0 +1,324 @@
+// PROPOSED CLINICAL DATA MODEL — NOT MIGRATED OR DEPLOYED.
+// Do not load real patient data until security / privacy / clinical review gates are met.
+// All clinical record access MUST be authorized server-side for facility + role + patient context.
+// Composite foreign keys are used on critical patient-owned relationships to prevent cross-facility joins.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role { OWNER FACILITY_ADMIN DOCTOR NURSE RECEPTIONIST LAB_STAFF BILLING AUDITOR }
+enum AppointmentStatus { REQUESTED CONFIRMED ARRIVED IN_PROGRESS COMPLETED CANCELLED NO_SHOW }
+enum EncounterStatus { SCHEDULED IN_PROGRESS COMPLETED CANCELLED ENTERED_IN_ERROR }
+enum NoteStatus { DRAFT SIGNED AMENDED ENTERED_IN_ERROR }
+enum OrderStatus { DRAFT ACTIVE COMPLETED CANCELLED ENTERED_IN_ERROR }
+enum ChargeStatus { DRAFT BILLED PART_PAID PAID VOIDED }
+
+model Facility {
+  id String @id @default(uuid())
+  name String
+  legalName String?
+  countryCode String @default("NG")
+  timeZone String @default("Africa/Lagos")
+  createdAt DateTime @default(now())
+  memberships FacilityMembership[]
+  patients Patient[]
+  appointments Appointment[]
+  encounters Encounter[]
+  notes ClinicalNote[]
+  observations Observation[]
+  allergies AllergyIntolerance[]
+  prescriptions MedicationOrder[]
+  serviceRequests DiagnosticOrder[]
+  reports DiagnosticReport[]
+  documents ClinicalDocument[]
+  dentalFindings DentalFinding[]
+  eyeExams EyeExam[]
+  charges BillingCharge[]
+  auditEvents AuditEvent[]
+}
+
+model User {
+  id String @id @default(uuid())
+  email String @unique
+  identitySubject String? @unique
+  mfaEnforced Boolean @default(false)
+  disabledAt DateTime?
+  createdAt DateTime @default(now())
+  memberships FacilityMembership[]
+  authoredNotes ClinicalNote[] @relation("NoteAuthor")
+  signedNotes ClinicalNote[] @relation("NoteSigner")
+}
+
+model FacilityMembership {
+  id String @id @default(uuid())
+  facilityId String
+  userId String
+  role Role
+  active Boolean @default(true)
+  createdAt DateTime @default(now())
+  facility Facility @relation(fields:[facilityId],references:[id],onDelete:Restrict)
+  user User @relation(fields:[userId],references:[id],onDelete:Restrict)
+  @@unique([facilityId,userId])
+  @@index([facilityId,role])
+}
+
+model Patient {
+  id String @id @default(uuid())
+  facilityId String
+  mrn String
+  displayName String
+  dateOfBirth DateTime? @db.Date
+  administrativeGender String?
+  phoneEncrypted Bytes?
+  emergencyContactEncrypted Bytes?
+  addressEncrypted Bytes?
+  status String @default("active")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  facility Facility @relation(fields:[facilityId],references:[id],onDelete:Restrict)
+  appointments Appointment[]
+  encounters Encounter[]
+  notes ClinicalNote[]
+  observations Observation[]
+  allergies AllergyIntolerance[]
+  prescriptions MedicationOrder[]
+  serviceRequests DiagnosticOrder[]
+  reports DiagnosticReport[]
+  documents ClinicalDocument[]
+  dentalFindings DentalFinding[]
+  eyeExams EyeExam[]
+  charges BillingCharge[]
+  @@unique([facilityId,mrn])
+  @@unique([facilityId,id])
+  @@index([facilityId,displayName])
+}
+
+model Appointment {
+  id String @id @default(uuid())
+  facilityId String
+  patientId String
+  practitionerMembershipId String?
+  scheduledStart DateTime
+  scheduledEnd DateTime
+  status AppointmentStatus @default(REQUESTED)
+  reason String?
+  createdAt DateTime @default(now())
+  facility Facility @relation(fields:[facilityId],references:[id],onDelete:Restrict)
+  patient Patient @relation(fields:[facilityId,patientId],references:[facilityId,id],onDelete:Restrict)
+  encounters Encounter[]
+  @@unique([facilityId,id])
+  @@index([facilityId,scheduledStart,status])
+  @@index([facilityId,patientId,scheduledStart])
+}
+
+model Encounter {
+  id String @id @default(uuid())
+  facilityId String
+  patientId String
+  appointmentId String?
+  clinicianMembershipId String
+  status EncounterStatus @default(IN_PROGRESS)
+  startedAt DateTime @default(now())
+  endedAt DateTime?
+  reason String?
+  facility Facility @relation(fields:[facilityId],references:[id],onDelete:Restrict)
+  patient Patient @relation(fields:[facilityId,patientId],references:[facilityId,id],onDelete:Restrict)
+  appointment Appointment? @relation(fields:[facilityId,appointmentId],references:[facilityId,id],onDelete:Restrict)
+  notes ClinicalNote[]
+  observations Observation[]
+  prescriptions MedicationOrder[]
+  serviceRequests DiagnosticOrder[]
+  dentalFindings DentalFinding[]
+  eyeExams EyeExam[]
+  @@unique([facilityId,id])
+  @@index([facilityId,patientId,startedAt])
+}
+
+model ClinicalNote {
+  id String @id @default(uuid())
+  facilityId String
+  patientId String
+  encounterId String
+  version Int @default(1)
+  status NoteStatus @default(DRAFT)
+  contentEncrypted Bytes // encrypted content only; avoid PHI in logs
+  authoredById String
+  signedById String?
+  signedAt DateTime?
+  previousVersionId String?
+  createdAt DateTime @default(now())
+  facility Facility @relation(fields:[facilityId],references:[id],onDelete:Restrict)
+  patient Patient @relation(fields:[facilityId,patientId],references:[facilityId,id],onDelete:Restrict)
+  encounter Encounter @relation(fields:[facilityId,encounterId],references:[facilityId,id],onDelete:Restrict)
+  authoredBy User @relation("NoteAuthor",fields:[authoredById],references:[id],onDelete:Restrict)
+  signedBy User? @relation("NoteSigner",fields:[signedById],references:[id],onDelete:Restrict)
+  @@unique([facilityId,id])
+  @@index([facilityId,patientId,encounterId])
+}
+
+model Observation {
+  id String @id @default(uuid())
+  facilityId String
+  patientId String
+  encounterId String?
+  category String // mapped to terminology system in clinical adapter
+  code String
+  codeSystem String?
+  measuredAt DateTime
+  valueDecimal Decimal? @db.Decimal(16,6)
+  valueTextEncrypted Bytes?
+  unitCode String?
+  laterality String?
+  status String
+  facility Facility @relation(fields:[facilityId],references:[id],onDelete:Restrict)
+  patient Patient @relation(fields:[facilityId,patientId],references:[facilityId,id],onDelete:Restrict)
+  encounter Encounter? @relation(fields:[facilityId,encounterId],references:[facilityId,id],onDelete:Restrict)
+  @@index([facilityId,patientId,measuredAt])
+}
+
+model AllergyIntolerance {
+  id String @id @default(uuid())
+  facilityId String
+  patientId String
+  substanceCode String?
+  substanceTextEncrypted Bytes?
+  clinicalStatus String
+  verificationStatus String
+  recordedAt DateTime @default(now())
+  facility Facility @relation(fields:[facilityId],references:[id],onDelete:Restrict)
+  patient Patient @relation(fields:[facilityId,patientId],references:[facilityId,id],onDelete:Restrict)
+  @@index([facilityId,patientId])
+}
+
+model MedicationOrder {
+  id String @id @default(uuid())
+  facilityId String
+  patientId String
+  encounterId String?
+  prescriberMembershipId String
+  drugCode String?
+  instructionsEncrypted Bytes
+  status OrderStatus @default(DRAFT)
+  authoredAt DateTime @default(now())
+  signedAt DateTime?
+  facility Facility @relation(fields:[facilityId],references:[id],onDelete:Restrict)
+  patient Patient @relation(fields:[facilityId,patientId],references:[facilityId,id],onDelete:Restrict)
+  encounter Encounter? @relation(fields:[facilityId,encounterId],references:[facilityId,id],onDelete:Restrict)
+  @@index([facilityId,patientId,authoredAt])
+}
+
+model DiagnosticOrder {
+  id String @id @default(uuid())
+  facilityId String
+  patientId String
+  encounterId String?
+  code String?
+  descriptionEncrypted Bytes
+  priority String @default("routine")
+  status OrderStatus @default(DRAFT)
+  orderedAt DateTime @default(now())
+  facility Facility @relation(fields:[facilityId],references:[id],onDelete:Restrict)
+  patient Patient @relation(fields:[facilityId,patientId],references:[facilityId,id],onDelete:Restrict)
+  encounter Encounter? @relation(fields:[facilityId,encounterId],references:[facilityId,id],onDelete:Restrict)
+  reports DiagnosticReport[]
+  @@unique([facilityId,id])
+  @@index([facilityId,patientId,orderedAt])
+}
+
+model DiagnosticReport {
+  id String @id @default(uuid())
+  facilityId String
+  patientId String
+  orderId String
+  status String @default("preliminary")
+  payloadEncrypted Bytes?
+  reviewerMembershipId String?
+  reviewedAt DateTime?
+  createdAt DateTime @default(now())
+  facility Facility @relation(fields:[facilityId],references:[id],onDelete:Restrict)
+  patient Patient @relation(fields:[facilityId,patientId],references:[facilityId,id],onDelete:Restrict)
+  order DiagnosticOrder @relation(fields:[facilityId,orderId],references:[facilityId,id],onDelete:Restrict)
+  @@index([facilityId,patientId,createdAt])
+}
+
+model ClinicalDocument {
+  id String @id @default(uuid())
+  facilityId String
+  patientId String
+  storageKeyEncrypted Bytes
+  sha256 String
+  mimeType String
+  sizeBytes BigInt
+  documentType String
+  uploadedAt DateTime @default(now())
+  facility Facility @relation(fields:[facilityId],references:[id],onDelete:Restrict)
+  patient Patient @relation(fields:[facilityId,patientId],references:[facilityId,id],onDelete:Restrict)
+  @@index([facilityId,patientId,uploadedAt])
+}
+
+model EyeExam {
+  id String @id @default(uuid())
+  facilityId String
+  patientId String
+  encounterId String
+  laterality String
+  measuredAt DateTime @default(now())
+  observationsEncrypted Bytes // visual acuity, IOP, refraction etc, schema versioned
+  status String @default("draft")
+  facility Facility @relation(fields:[facilityId],references:[id],onDelete:Restrict)
+  patient Patient @relation(fields:[facilityId,patientId],references:[facilityId,id],onDelete:Restrict)
+  encounter Encounter @relation(fields:[facilityId,encounterId],references:[facilityId,id],onDelete:Restrict)
+  @@index([facilityId,patientId,measuredAt])
+}
+
+model DentalFinding {
+  id String @id @default(uuid())
+  facilityId String
+  patientId String
+  encounterId String
+  toothCode String
+  codingSystem String
+  findingEncrypted Bytes
+  status String @default("draft")
+  recordedAt DateTime @default(now())
+  facility Facility @relation(fields:[facilityId],references:[id],onDelete:Restrict)
+  patient Patient @relation(fields:[facilityId,patientId],references:[facilityId,id],onDelete:Restrict)
+  encounter Encounter @relation(fields:[facilityId,encounterId],references:[facilityId,id],onDelete:Restrict)
+  @@index([facilityId,patientId,toothCode])
+}
+
+model BillingCharge {
+  id String @id @default(uuid())
+  facilityId String
+  patientId String
+  encounterId String?
+  serviceCode String
+  currency String @default("NGN")
+  amountMinor BigInt
+  status ChargeStatus @default(DRAFT)
+  createdAt DateTime @default(now())
+  facility Facility @relation(fields:[facilityId],references:[id],onDelete:Restrict)
+  patient Patient @relation(fields:[facilityId,patientId],references:[facilityId,id],onDelete:Restrict)
+  @@index([facilityId,patientId,createdAt])
+}
+
+model AuditEvent {
+  id String @id @default(uuid())
+  facilityId String
+  actorUserId String?
+  action String // includes patient view/access, denied access, export, create, sign, amend
+  resourceType String
+  resourceId String?
+  subjectPatientId String?
+  correlationId String
+  occurredAt DateTime @default(now())
+  metadataJson Json? // strict non-PHI allowlist enforced in application
+  facility Facility @relation(fields:[facilityId],references:[id],onDelete:Restrict)
+  @@index([facilityId,occurredAt])
+  @@index([facilityId,subjectPatientId,occurredAt])
+}
