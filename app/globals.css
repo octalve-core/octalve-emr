@@ -28,3 +28,20 @@ button{cursor:pointer}
 .emr-dialog-backdrop{position:fixed;inset:0;z-index:70;background:#08182DB3;display:flex;align-items:center;justify-content:center;padding:16px}
 .emr-dialog{width:100%;max-width:530px;max-height:90dvh;overflow:auto;border-radius:20px;background:#fff;box-shadow:0 28px 85px #00192B50;padding:23px}
 @media(max-width:640px){.emr-dialog-backdrop{align-items:end;padding:0}.emr-dialog{border-radius:20px 20px 0 0;max-height:89dvh;padding:19px 17px 28px}}
+
+/* Independent EMR desktop table rhythm — aligned with the approved Finance visual language. */
+.emr-table{border-collapse:separate;border-spacing:0 7px;table-layout:auto}
+.emr-th{background:#F2F4F8;padding:13px 14px;white-space:nowrap}
+.emr-table thead .emr-th:first-child{border-radius:12px 0 0 12px}
+.emr-table thead .emr-th:last-child{border-radius:0 12px 12px 0}
+.emr-td{border-bottom:0;background:#F7F8FA;padding:14px 14px;transition:background .15s ease}
+.emr-table tbody tr:hover .emr-td{background:#EFF5FE}
+.emr-table tbody .emr-td:first-child{border-radius:13px 0 0 13px}
+.emr-table tbody .emr-td:last-child{border-radius:0 13px 13px 0}
+
+/* Mobile/tablet clinical record cards — never a horizontally scrollable desktop table. */
+.emr-mobile-record{min-width:0;border:1px solid #EDF0F4;border-radius:15px;background:#F7F8FA;padding:13px 12px;box-shadow:0 1px 0 rgba(10,41,75,.015)}
+.emr-mobile-record-icon{display:grid;place-items:center;flex:none;width:40px;height:40px;border-radius:13px;background:#EAF3FF;color:#0064E0}
+.emr-mobile-reference{display:inline-flex;max-width:100%;overflow-wrap:anywhere;border-radius:999px;background:#FFFFFF;padding:4px 8px;font-size:10px;font-weight:600;color:#7890A7}
+.emr-mobile-record .emr-pill{padding:5px 8px;font-size:10px}
+@media(max-width:359px){.emr-mobile-record{padding:11px 10px}.emr-mobile-record-icon{width:36px;height:36px}}
