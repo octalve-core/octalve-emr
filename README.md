@@ -9,6 +9,7 @@ Octalve EMR is a **separate product** built as a clean-room visual adaptation of
 - Self-contained browser preview: [`demo/preview.html`](demo/preview.html). Opens without installing dependencies; includes fictional patient and clinic workflows that reset on refresh.
 - Next.js 16 App Router / React 19 / TypeScript / Tailwind 4 source with independently implemented dark desktop sidebar (`#000A16`), Octalve blue (`#0064E0`), fixed navigation, mobile five-tab bar, responsive data tables, cards, status chips and dialogs.
 - Clinical Overview, Patients, Patient Detail, Appointments, Encounters, Laboratory & Diagnostics, Ophthalmology, Dental Care, Billing, Reports and Clinic Settings.
+- Standalone `/login` and `/signup` preview pages; inputs intentionally disabled until authentic identity, MFA and facility authorization exist. `/` redirects to `/login`; `/dashboard` remains a public fictional demo.
 - In-memory demo actions: add fictional patient, schedule fictional appointment (same-clinician/same-start conflict check), create unsigned fictional note and diagnostic request, check in a fictional patient. Nothing is transmitted or persisted.
 - Clinical domain pure-function tests, proposed Prisma/PostgreSQL schema with facility-scoped records, deny-by-default server authorization stub, disabled patient and appointment APIs, and architecture/privacy/provenance documents.
 
@@ -30,7 +31,7 @@ Octalve EMR is a **separate product** built as a clean-room visual adaptation of
    pnpm dev
    ```
 
-3. Open `http://localhost:3000/dashboard`.
+3. Open `http://localhost:3000/` for sign-in/signup previews, or `http://localhost:3000/dashboard` for the fictional clinic workspace.
 4. To run offline-compatible checks: `node --test tests/*.test.mjs`. Once dependencies are installed, run `pnpm typecheck`, `pnpm lint`, `pnpm build` and browser tests before deployment.
 
 **Important:** This package includes a review-only CI workflow and Vercel branch deployment rules. It does not include a lockfile because the build environment could not connect to the npm registry. Generate and commit `pnpm-lock.yaml` with `pnpm install` on a connected machine, then run frozen-lockfile CI. The Next.js package versions in `package.json` must be checked against current security advisories before production use.

@@ -1,2 +1,3 @@
 import {redirect} from "next/navigation";
-export default function Home(){redirect("/dashboard")}
+/** Public landing route: demo auth presentation (not a real access boundary). */
+export default function Home(){redirect("/login");}
