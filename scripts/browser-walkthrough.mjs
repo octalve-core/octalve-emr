@@ -26,7 +26,7 @@ try{
  await go('Open patient edit inner page',page.getByRole('link',{name:/Edit eligible details/}).first());
  await page.getByLabel('Full name').fill('Amara Example'); await pause('Type fictional patient edit');
  await go('Save patient edit',page.getByRole('button',{name:/Save in current session/}));
- await go('Return to patient directory',page.getByRole('link',{name:/Back to Patients/}));
+ await go('Return to patient directory',page.getByRole('link',{name:/Back to patients/i}));
  await go('Open visit list',bottom('Visits'));
  await go('Open encounter record',page.getByRole('main').getByRole('link',{name:'View'}).first());
  await go('Return to encounters',page.getByRole('link',{name:/Back to Clinical encounters/}));
