@@ -45,3 +45,39 @@ button{cursor:pointer}
 .emr-mobile-reference{display:inline-flex;max-width:100%;overflow-wrap:anywhere;border-radius:999px;background:#FFFFFF;padding:4px 8px;font-size:10px;font-weight:600;color:#7890A7}
 .emr-mobile-record .emr-pill{padding:5px 8px;font-size:10px}
 @media(max-width:359px){.emr-mobile-record{padding:11px 10px}.emr-mobile-record-icon{width:36px;height:36px}}
+
+/* Octalve EMR own Finance-inspired visual rhythm. No shared runtime code. */
+html,body{background:#fff}
+.emr-card{border-color:#EAEDF1;box-shadow:0 3px 15px rgba(22,48,79,.045)}
+.emr-action-trigger{display:grid;place-items:center;width:38px;height:38px;color:#7c8fa4;background:transparent;border-radius:10px}
+.emr-action-trigger:hover,.emr-action-trigger:focus-visible{background:#eef4fc;color:#0064e0}
+.emr-action-overlay{position:fixed;inset:0;z-index:100;background:transparent}
+.emr-action-sheet{position:fixed;top:var(--menu-top);left:var(--menu-left);width:270px;max-height:min(590px,80dvh);overflow:auto;padding:11px;background:#fff;border:1px solid #e5eaf1;border-radius:17px;box-shadow:0 16px 45px rgba(20,46,77,.16)}
+.emr-action-handle,.emr-action-cancel{display:none}
+.emr-action-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 11px;border-bottom:1px solid #edf1f5}
+.emr-action-close{width:32px;height:32px;display:grid;place-items:center;border-radius:9px;color:#7489a0}
+.emr-action-close:hover{background:#f2f5f9}
+.emr-action-items{display:grid;gap:5px;padding-top:9px}
+.emr-action-option{display:flex;align-items:center;gap:12px;width:100%;min-height:46px;border-radius:11px;padding:8px 10px;color:#28435e;text-align:left;font-size:12px;font-weight:650}
+.emr-action-option:hover,.emr-action-option:focus-visible{background:#f4f6f9}
+.emr-action-symbol{display:grid;place-items:center;flex:none;width:34px;height:34px;border-radius:11px;background:#e9f2ff;color:#0064e0}
+.emr-action-danger{color:#cb3343}.emr-action-danger .emr-action-symbol{background:#ffebed;color:#cb3343}
+.emr-surface{background:#fff;border:1px solid #eaedf3;border-radius:18px;box-shadow:0 3px 18px rgba(22,48,79,.045)}
+.emr-soft-icon{display:grid;place-items:center;width:44px;height:44px;border-radius:14px;background:#eaf3ff;color:#0064e0}
+.emr-soft-icon.green{background:#dcfae9;color:#14875b}.emr-soft-icon.orange{background:#fff1d9;color:#bf771a}.emr-soft-icon.violet{background:#f2eafa;color:#8256ba}
+.emr-quick-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.emr-quick-item{display:flex;align-items:center;flex-direction:column;gap:10px;min-width:0;text-align:center;font-size:11px;font-weight:650;color:#29415b;padding:10px 2px;border-radius:13px}
+.emr-quick-item:hover{background:#f5f9ff}
+.emr-record-link{font-weight:700;color:#0064e0;text-decoration:none}
+.emr-record-link:hover{text-decoration:underline}
+@media(max-width:767px){
+ .emr-action-overlay{background:#08152c8c;display:flex;align-items:flex-end}
+ .emr-action-sheet{top:auto;bottom:0;left:0;width:100%;max-height:87dvh;border:0;border-radius:24px 24px 0 0;padding:14px 20px max(24px,env(safe-area-inset-bottom));box-shadow:0 -10px 34px rgba(11,31,63,.18)}
+ .emr-action-handle{display:block;width:40px;height:4px;border-radius:20px;background:#e1e4e9;margin:0 auto 14px}
+ .emr-action-head{padding:14px 5px 20px}
+ .emr-action-option{min-height:59px;margin:3px 0;padding:10px 12px;background:#f7f8fa;font-size:14px}
+ .emr-action-option:hover{background:#edf3ff}
+ .emr-action-cancel{display:block;width:100%;margin-top:15px;border-radius:28px;border:1px solid #0064e0;padding:15px;font-size:14px;font-weight:700;color:#0064e0}
+ .emr-quick-grid{gap:5px}.emr-quick-item{font-size:10px}
+ .emr-dialog{border-radius:24px 24px 0 0}
+}

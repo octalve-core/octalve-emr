@@ -1,0 +1,55 @@
+name: EMR continuous browser walkthrough
+on:
+  workflow_dispatch:
+  push:
+    branches: ['review/emr']
+permissions:
+  contents: read
+concurrency:
+  group: emr-browser-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.18.3
+          run_install: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - name: Install separate browser recorder (not in application dependency graph)
+        run: |
+          npm install --prefix /tmp/emr-browser --no-save playwright@1.56.1
+          /tmp/emr-browser/node_modules/.bin/playwright install chromium --with-deps
+      - name: Start EMR application
+        run: |
+          pnpm start --hostname 127.0.0.1 > /tmp/emr-next.log 2>&1 &
+          for i in $(seq 1 30); do if curl -fsS http://127.0.0.1:3000/ -o /dev/null; then exit 0; fi; sleep 2; done
+          tail -100 /tmp/emr-next.log
+          exit 1
+      - name: Walk through using clicks and form controls only
+        run: node scripts/browser-walkthrough.mjs
+      - name: Render single watchable MP4
+        if: always()
+        run: |
+          if [ -s browser-evidence/octalve-emr-continuous-walkthrough.webm ]; then
+            ffmpeg -hide_banner -loglevel error -y -i browser-evidence/octalve-emr-continuous-walkthrough.webm -movflags +faststart -pix_fmt yuv420p browser-evidence/Octalve_EMR_Continuous_Browser_Walkthrough.mp4
+          fi
+      - name: Publish evidence, including failure screenshot when relevant
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: emr-continuous-browser-walkthrough
+          path: browser-evidence/
+          retention-days: 14
+          if-no-files-found: warn
