@@ -43,6 +43,7 @@ jobs:
         if: always()
         run: |
           if [ -s browser-evidence/octalve-emr-continuous-walkthrough.webm ]; then
+            sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
             ffmpeg -hide_banner -loglevel error -y -i browser-evidence/octalve-emr-continuous-walkthrough.webm -movflags +faststart -pix_fmt yuv420p browser-evidence/Octalve_EMR_Continuous_Browser_Walkthrough.mp4
           fi
       - name: Publish evidence, including failure screenshot when relevant
