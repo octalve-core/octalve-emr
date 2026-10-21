@@ -56,7 +56,7 @@ try{
  await go('Open visible check-in confirmation',page.getByRole('button',{name:'Check in appointment'}));
  await page.getByRole('dialog',{name:'Confirm appointment check-in'}).waitFor();
  await go('Confirm sample check-in',page.getByRole('button',{name:'Confirm check-in'}));
- await page.getByText('Checked in',{exact:true}).waitFor();
+ await page.getByRole('status').getByText('Checked in',{exact:true}).waitFor();
  if(await page.getByRole('button',{name:'Check in appointment'}).count())throw new Error('Checked-in appointment still offers check-in');
  await responsive('Checked-in appointment');
  await go('Return to appointments',page.getByRole('link',{name:/Back to Appointments/}));
