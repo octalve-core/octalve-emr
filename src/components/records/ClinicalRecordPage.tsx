@@ -13,7 +13,10 @@ const icon:Record<Kind,typeof UserRound>={patients:UserRound,appointments:Calend
 const displayDate=(date:string)=>date?new Date(date+"T12:00:00").toLocaleDateString("en-GB",{year:"numeric",month:"short",day:"numeric"}):"—";
 export function ClinicalRecordPage({kind,id,edit=false}:{kind:Kind;id:string;edit?:boolean}){
  const {patients,appointments,encounters,labs,charges,updatePatient,rescheduleAppointment,updateAppointment,updateEncounterDraft,updateLabRequest}=useDemo();
- const router=useRouter();const [feedback,setFeedback]=useState("");const [confirmCancel,setConfirmCancel]=useState(false);const Icon=icon[kind];
+ const router=useRouter();const [feedback,setFeedback]=useState("");
+ const [confirmCancel,setConfirmCancel]=useState(false);
+ const [confirmCheckIn,setConfirmCheckIn]=useState(false);
+ const Icon=icon[kind];
  const patient=patients.find(p=>p.id===id),appointment=appointments.find(a=>a.id===id),encounter=encounters.find(e=>e.id===id),lab=labs.find(l=>l.id===id),charge=charges.find(c=>c.id===id);
  const record=kind==="patients"?patient:kind==="appointments"?appointment:kind==="encounters"?encounter:kind==="laboratory"?lab:charge;
  const linkedId=kind==="patients"?id:kind==="appointments"?appointment?.patientId:kind==="encounters"?encounter?.patientId:kind==="laboratory"?lab?.patientId:charge?.patientId;
@@ -21,6 +24,13 @@ export function ClinicalRecordPage({kind,id,edit=false}:{kind:Kind;id:string;edi
  const href=`/dashboard/${kind}/${id}`;
  const eligible=kind==="patients"?Boolean(patient):kind==="appointments"?appointment?.status==="Confirmed":kind==="encounters"?encounter?.status==="In progress":kind==="laboratory"?lab?.status==="Pending":false;
  const name=linked?.name||"Unknown fictional patient";
+ const canCheckIn=kind==="appointments"&&appointment?.status==="Confirmed";
+ function checkInDemo(){
+  if(!canCheckIn){setFeedback("This fictional appointment is no longer eligible for check-in.");setConfirmCheckIn(false);return}
+  updateAppointment(id,"Checked in");
+  setConfirmCheckIn(false);
+  setFeedback("Checked in for this browser session only. No identity verification, notification or live clinical event occurred.");
+ }
  const title=kind==="patients"?patient?.name:kind==="appointments"?`Appointment ${id}`:kind==="encounters"?`Encounter ${id}`:kind==="laboratory"?`Request ${id}`:`Charge ${id}`;
  function save(e:FormEvent<HTMLFormElement>){e.preventDefault();if(!eligible)return;const d=new FormData(e.currentTarget);const val=(key:string)=>String(d.get(key)||"").trim();
   if(kind==="patients"&&patient){const age=Number(val("age"));if(!val("name")||!Number.isInteger(age)||age<0||age>130){setFeedback("Enter a valid fictional patient name and age.");return}updatePatient(id,{name:val("name"),age,phone:val("phone"),email:val("email"),city:val("city"),department:val("department") as Patient["department"]});}
@@ -35,9 +45,27 @@ export function ClinicalRecordPage({kind,id,edit=false}:{kind:Kind;id:string;edi
  kind==="encounters"&&encounter?[["Patient",name],["Date",displayDate(encounter.date)],["Clinician",encounter.clinician],["Reason",encounter.reason],["Department",encounter.department],["Status",encounter.status]]:
  kind==="laboratory"&&lab?[["Patient",name],["Investigation",lab.test],["Ordered by",lab.orderedBy],["Date",displayDate(lab.date)],["Priority",lab.priority],["Status",lab.status]]:
  kind==="billing"&&charge?[["Patient",name],["Service",charge.service],["Date",displayDate(charge.date)],["Amount",`₦${charge.amount.toLocaleString("en-NG")}`],["Status",charge.status]]:[];
- const actions=[{label:"View record",href},{label:"Patient profile",href:`/dashboard/patients/${linkedId}`},...(eligible?[{label:"Edit record",href:`${href}/edit`}]:[]),...(kind==="appointments"&&appointment?.status==="Confirmed"?[{label:"Check in (session only)",onClick:()=>{updateAppointment(id,"Checked in");setFeedback("Fictional appointment checked in for this browser session only.")}},{label:"Cancel (session only)",danger:true,onClick:()=>setConfirmCancel(true)}]:[])];
+ const actions=[{label:"View record",href},{label:"Patient profile",href:`/dashboard/patients/${linkedId}`},...(eligible?[{label:"Edit record",href:`${href}/edit`}]:[]),...(kind==="appointments"&&appointment?.status==="Confirmed"?[{label:"Check in (demo)",onClick:()=>setConfirmCheckIn(true)},{label:"Cancel (session only)",danger:true,onClick:()=>setConfirmCancel(true)}]:[])];
  return <div className="space-y-5"><Link href={`/dashboard/${kind}`} className="inline-flex min-h-10 items-center gap-2 text-xs font-bold text-[#0064E0]"><ArrowLeft size={17}/>Back to {backLabel[kind]}</Link>
-  <header className="flex flex-wrap items-start justify-between gap-3"><div className="flex items-center gap-3"><span className="emr-soft-icon"><Icon size={22}/></span><div><h1 className="text-[23px] font-extrabold tracking-tight text-[#183553] sm:text-[28px]">{edit?`Edit ${backLabel[kind].toLowerCase().replace(/s$/,'')}`:title}</h1><p className="mt-1 text-xs text-[#8094aa]">{kind==="patients"?patient?.mrn:name} · Fictional record</p></div></div>{!edit?<RecordActionMenu title={String(title)} items={actions}/>:null}</header>
+  <header className="flex flex-wrap items-start justify-between gap-3"><div className="flex items-center gap-3"><span className="emr-soft-icon"><Icon size={22}/></span><div><h1 className="text-[23px] font-extrabold tracking-tight text-[#183553] sm:text-[28px]">{edit?`Edit ${backLabel[kind].toLowerCase().replace(/s$/,'')}`:title}</h1><p className="mt-1 text-xs text-[#8094aa]">{kind==="patients"?patient?.mrn:name} · Fictional record</p></div></div>{!edit?<div className="flex flex-wrap items-center gap-2">
+   {canCheckIn?<button type="button" onClick={()=>setConfirmCheckIn(true)} className="emr-primary" aria-label="Check in fictional appointment"><CheckCircle2 size={17}/>Check in <span className="text-[10px] font-normal opacity-80">(demo)</span></button>:null}
+   {kind==="appointments"&&appointment?.status==="Checked in"?<span role="status" className="inline-flex min-h-10 items-center gap-2 rounded-xl border border-[#B9EAD2] bg-[#ECFAF2] px-3 text-xs font-semibold text-[#16764B]"><CheckCircle2 size={17}/>Checked in (demo)</span>:null}
+   <RecordActionMenu title={String(title)} items={actions}/>
+  </div>:null}</header>
+  {confirmCheckIn?<div className="emr-dialog-backdrop" onMouseDown={e=>{if(e.target===e.currentTarget)setConfirmCheckIn(false)}}>
+    <section role="dialog" aria-modal="true" aria-label="Confirm fictional appointment check-in" className="emr-dialog" onKeyDown={e=>{if(e.key==="Escape"){e.preventDefault();setConfirmCheckIn(false)}}}>
+     <span className="emr-soft-icon green"><CheckCircle2 size={22}/></span>
+     <h2 className="mt-4 text-lg font-bold text-[#24415e]">Check in this appointment?</h2>
+     <p className="mt-2 text-xs leading-6 text-[#71879d]">You are updating a fictional appointment for <strong>{name}</strong>. Confirm the appointment details below before continuing.</p>
+     <dl className="mt-4 grid grid-cols-2 gap-3 rounded-xl bg-[#F6F8FA] p-4 text-xs">
+      <div><dt className="text-[#8294A7]">Date</dt><dd className="mt-1 font-semibold text-[#23415E]">{displayDate(appointment?.date||"")}</dd></div>
+      <div><dt className="text-[#8294A7]">Time</dt><dd className="mt-1 font-semibold text-[#23415E]">{appointment?.time||"—"}</dd></div>
+      <div className="col-span-2"><dt className="text-[#8294A7]">Clinician</dt><dd className="mt-1 font-semibold text-[#23415E]">{doctors.find(d=>d.id===appointment?.practitionerId)?.name||"—"}</dd></div>
+     </dl>
+     <p className="mt-4 rounded-xl bg-[#EFF7FF] p-3 text-xs leading-5 text-[#426E98]">Demonstration only: this does not verify a patient's identity, notify a clinician, begin an encounter or save to a secure server.</p>
+     <div className="mt-5 flex flex-wrap gap-2"><button type="button" className="emr-secondary" onClick={()=>setConfirmCheckIn(false)}>Go back</button><button type="button" autoFocus className="emr-primary" onClick={checkInDemo} disabled={!canCheckIn}><CheckCircle2 size={16}/>Confirm demo check-in</button></div>
+    </section>
+   </div>:null}
   {confirmCancel?<div className="emr-dialog-backdrop" onMouseDown={e=>{if(e.target===e.currentTarget)setConfirmCancel(false)}}><form role="dialog" aria-modal="true" aria-label="Cancel fictional appointment" className="emr-dialog" onSubmit={e=>{e.preventDefault();updateAppointment(id,"Cancelled");setFeedback("Appointment cancelled in this fictional browser session. No patient was notified.");setConfirmCancel(false)}}><h2 className="text-lg font-bold text-[#24415e]">Cancel appointment</h2><p className="mt-2 text-xs leading-5 text-[#71879d]">Give a reason before changing this illustrative appointment. No message or calendar cancellation will be sent.</p><label className="emr-label mt-5">Reason<textarea name="reason" required minLength={5} maxLength={400} className="emr-area mt-2" placeholder="Enter reason (fictional only)"/></label><div className="mt-5 flex flex-wrap gap-2"><button className="emr-secondary" type="button" onClick={()=>setConfirmCancel(false)}>Keep appointment</button><button className="emr-primary !bg-[#C93C4A]" type="submit">Confirm cancellation</button></div></form></div>:null}
   {feedback?<p role="status" className="rounded-xl border border-blue-200 bg-blue-50 p-4 text-xs text-blue-900">{feedback}</p>:null}
   <div className="rounded-xl border border-[#D9E7F7] bg-[#F0F7FF] p-4 text-xs leading-relaxed text-[#4A6F93]"><Info size={16} className="mr-2 inline"/>Fictional interface only. Changes are held in browser memory; real patient records, access permissions, signatures, audit logs, notifications and billing require the secure clinical backend.</div>
