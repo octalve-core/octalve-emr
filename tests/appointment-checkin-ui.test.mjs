@@ -8,14 +8,14 @@ const provider=read('src/components/DemoProvider.tsx');
 const browser=read('scripts/browser-walkthrough.mjs');
 test('a confirmed appointment visibly offers a record-level check-in action',()=>{
  assert.match(detail,/const canCheckIn=kind==="appointments"&&appointment\?\.status==="Confirmed"/);
- assert.match(detail,/aria-label="Check in fictional appointment"/);
- assert.match(detail,/Check in <span/);
+ assert.match(detail,/aria-label="Check in appointment"/);
+ assert.match(detail,/<CheckCircle2 size=\{17\}\/>Check in/);
  assert.match(list,/section==="appointments"&&editable\?"Review check-in":"View"/);
 });
 test('check-in requires a quick labelled confirmation with patient, date, time and clinician',()=>{
- assert.match(detail,/role="dialog" aria-modal="true" aria-label="Confirm fictional appointment check-in"/);
- assert.match(detail,/Confirm demo check-in/);
- assert.match(detail,/\{name\}.*fictional appointment|fictional appointment for <strong>\{name\}/);
+ assert.match(detail,/role="dialog" aria-modal="true" aria-label="Confirm appointment check-in"/);
+ assert.match(detail,/Confirm check-in/);
+ assert.match(detail,/Confirm the appointment for <strong>\{name\}/);
  assert.match(detail,/displayDate\(appointment\?\.date\|\|""\)/);
  assert.match(detail,/appointment\?\.time\|\|"—"/);
  assert.match(detail,/appointment\?\.practitionerId/);
@@ -24,8 +24,8 @@ test('checked-in appointments do not invite duplicate check-in or imply medical 
  assert.match(detail,/if\(!canCheckIn\)/);
  assert.match(detail,/updateAppointment\(id,"Checked in"\)/);
  assert.match(detail,/appointment\?\.status==="Checked in"/);
- assert.match(detail,/Checked in \(demo\)/);
- assert.match(detail,/this does not verify patient identity/);
+ assert.match(detail,/Checked in/);
+ assert.match(detail,/Sample check-in only\. No patient arrival/);
  assert.doesNotMatch(detail,/fetch\(|localStorage|sessionStorage/);
  assert.match(provider,/useState\(initialAppointments\)/);
  const api=read('app/api/v1/appointments/route.ts');
@@ -35,7 +35,7 @@ test('checked-in appointments do not invite duplicate check-in or imply medical 
 test('one continuous browser walkthrough tests the visible check-in and four viewport widths',()=>{
  assert.match(browser,/Open confirmed appointment for check-in/);
  assert.match(browser,/Open visible check-in confirmation/);
- assert.match(browser,/Confirm fictional check-in/);
+ assert.match(browser,/Confirm sample check-in/);
  assert.match(browser,/Checked-in appointment/);
  assert.match(browser,/\[320,390,768,1440\]/);
  const executable=browser.split('\n').filter(line=>!line.trim().startsWith('*')&&!line.trim().startsWith('/**')).join('\n');

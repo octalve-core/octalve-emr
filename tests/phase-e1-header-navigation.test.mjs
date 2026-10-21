@@ -7,13 +7,13 @@ const workspace=read('src/components/WorkspaceView.tsx');
 const walkthrough=read('scripts/browser-walkthrough.mjs');
 test('desktop search navigates to a functional patient directory search target',()=>{
  assert.match(shell,/href="\/dashboard\/patients#patient-search"/);
- assert.match(shell,/Search fictional patients/);
+ assert.match(shell,/Search patients/);
  assert.match(workspace,/id=\{screen==="patients"\?"patient-search":undefined\}/);
  assert.match(workspace,/aria-label="Search records"/);
 });
 test('preview-only header has no dead notification button or redundant mobile profile menu',()=>{
  assert.doesNotMatch(shell,/aria-label="Notifications are a preview"/);
- assert.match(shell,/Demo only/);
+ assert.match(shell,/Sample workspace/);
  assert.match(shell,/className="relative hidden lg:block"/);
  assert.match(shell,/\["Me","\/dashboard\/profile"/);
  assert.match(shell,/aria-current=\{isActive\(pathname,href\)\?"page":undefined\}/);

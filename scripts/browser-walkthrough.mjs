@@ -31,14 +31,14 @@ const more=async(name)=>{await go('Open More',bottom('More'));await go('More →
 let result='failed';
 try{
  await page.goto(base,{waitUntil:'domcontentloaded',timeout:30000}); await pause('Open EMR from root address');
- await go('Enter fictional workspace',page.getByRole('link',{name:/Explore fictional demo/i}));
+ await go('Enter sample workspace',page.getByRole('link',{name:/Explore sample workspace/i}));
  await responsive('Dashboard');
  await go('Open patient directory',bottom('Patients'));
  await responsive('Patient directory');
  await go('Open first patient actions',page.getByRole('button',{name:'Actions for Amara Eze'}).first());
  await go('Open patient edit inner page',page.getByRole('link',{name:/Edit eligible details/}).first());
  await page.getByLabel('Full name').fill('Amara Example'); await pause('Type fictional patient edit');
- await go('Save patient edit',page.getByRole('button',{name:/Save in current session/}));
+ await go('Save patient edit',page.getByRole('button',{name:/Save changes/}));
  await go('Return to patient directory',page.getByRole('link',{name:/Back to patients/i}));
  await go('Open visit list',bottom('Visits'));
  await go('Open encounter record',page.getByRole('main').getByRole('link',{name:'View'}).first());
@@ -47,12 +47,12 @@ try{
  await go('Open confirmed appointment for check-in',page.getByRole('main').getByRole('link',{name:'Review check-in'}).first());
  await go('Open appointment reschedule form',page.getByRole('link',{name:/Edit eligible record/}));
  await page.getByRole('textbox',{name:'Reason'}).fill('Routine eye review — follow-up'); await pause('Type a fictional appointment reason');
- await go('Save appointment',page.getByRole('button',{name:/Save in current session/}));
- await go('Open visible check-in confirmation',page.getByRole('button',{name:'Check in fictional appointment'}));
- await page.getByRole('dialog',{name:'Confirm fictional appointment check-in'}).waitFor();
- await go('Confirm fictional check-in',page.getByRole('button',{name:'Confirm demo check-in'}));
- await page.getByText('Checked in (demo)',{exact:true}).waitFor();
- if(await page.getByRole('button',{name:'Check in fictional appointment'}).count())throw new Error('Checked-in appointment still offers check-in');
+ await go('Save appointment',page.getByRole('button',{name:/Save changes/}));
+ await go('Open visible check-in confirmation',page.getByRole('button',{name:'Check in appointment'}));
+ await page.getByRole('dialog',{name:'Confirm appointment check-in'}).waitFor();
+ await go('Confirm sample check-in',page.getByRole('button',{name:'Confirm check-in'}));
+ await page.getByText('Checked in',{exact:true}).waitFor();
+ if(await page.getByRole('button',{name:'Check in appointment'}).count())throw new Error('Checked-in appointment still offers check-in');
  await responsive('Checked-in appointment');
  await go('Return to appointments',page.getByRole('link',{name:/Back to Appointments/}));
  await more('Laboratory');
