@@ -72,7 +72,7 @@ try{
  await more('Clinic settings');
  await go('Open staff profile',bottom('Me'));
  await responsive('Staff profile');
- await go('Open sign-in from profile',page.getByRole('link',{name:/Open sign-in/}));
+ await go('Open sign-in from profile',page.getByRole('link',{name:'Sign-in page'}));
  await pause('Walkthrough complete');
  const width=await page.evaluate(()=>({document:document.documentElement.scrollWidth,viewport:innerWidth}));if(width.document>width.viewport+3)errors.push(`Page overflow: ${JSON.stringify(width)}`);
  if(errors.length)throw new Error('Browser errors: '+errors.join('; '));result='passed';
