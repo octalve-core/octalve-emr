@@ -44,10 +44,16 @@ try{
  await go('Open encounter record',page.getByRole('main').getByRole('link',{name:'View'}).first());
  await go('Return to encounters',page.getByRole('link',{name:/Back to Clinical encounters/}));
  await more('Appointments');
- await go('Open appointment record',page.getByRole('main').getByRole('link',{name:'View'}).first());
+ await go('Open confirmed appointment for check-in',page.getByRole('main').getByRole('link',{name:'Review check-in'}).first());
  await go('Open appointment reschedule form',page.getByRole('link',{name:/Edit eligible record/}));
  await page.getByRole('textbox',{name:'Reason'}).fill('Routine eye review — follow-up'); await pause('Type a fictional appointment reason');
  await go('Save appointment',page.getByRole('button',{name:/Save in current session/}));
+ await go('Open visible check-in confirmation',page.getByRole('button',{name:'Check in fictional appointment'}));
+ await page.getByRole('dialog',{name:'Confirm fictional appointment check-in'}).waitFor();
+ await go('Confirm fictional check-in',page.getByRole('button',{name:'Confirm demo check-in'}));
+ await page.getByText('Checked in (demo)',{exact:true}).waitFor();
+ if(await page.getByRole('button',{name:'Check in fictional appointment'}).count())throw new Error('Checked-in appointment still offers check-in');
+ await responsive('Checked-in appointment');
  await go('Return to appointments',page.getByRole('link',{name:/Back to Appointments/}));
  await more('Laboratory');
  await go('Inspect laboratory record',page.getByRole('main').getByRole('link',{name:'View'}).first());
