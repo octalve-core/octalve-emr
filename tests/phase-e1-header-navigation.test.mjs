@@ -31,7 +31,7 @@ test('continuous browser journey captures dashboard, patient directory and staff
  assert.match(walkthrough,/document\.documentElement\.scrollWidth/);
  assert.match(walkthrough,/page\.screenshot/);
  assert.match(walkthrough,/await page\.goto\(base/);
- const executable=walkthrough.split('\\n').filter(line=>!line.trim().startsWith('*')&&!line.trim().startsWith('/**')).join('\\n');
- assert.equal((executable.match(/page\\.goto\\(/g)||[]).length,1,'Only the entry route may be directly opened');
- assert.doesNotMatch(executable,/localStorage|\\.request\\.(?:get|post|put)|page\\.goto\\(.*dashboard/);
+ const executable=walkthrough.split('\n').filter(line=>!line.trim().startsWith('*')&&!line.trim().startsWith('/**')).join('\n');
+ assert.equal((executable.match(/page\.goto\(/g)||[]).length,1,'Only the entry route may be directly opened');
+ assert.doesNotMatch(executable,/localStorage|\.request\.(?:get|post|put)|page\.goto\(.*dashboard/);
 });
