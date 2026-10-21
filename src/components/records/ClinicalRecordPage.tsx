@@ -62,7 +62,7 @@ export function ClinicalRecordPage({kind,id,edit=false}:{kind:Kind;id:string;edi
       <div><dt className="text-[#8294A7]">Time</dt><dd className="mt-1 font-semibold text-[#23415E]">{appointment?.time||"—"}</dd></div>
       <div className="col-span-2"><dt className="text-[#8294A7]">Clinician</dt><dd className="mt-1 font-semibold text-[#23415E]">{doctors.find(d=>d.id===appointment?.practitionerId)?.name||"—"}</dd></div>
      </dl>
-     <p className="mt-4 rounded-xl bg-[#EFF7FF] p-3 text-xs leading-5 text-[#426E98]">Demonstration only: this does not verify a patient's identity, notify a clinician, begin an encounter or save to a secure server.</p>
+     <p className="mt-4 rounded-xl bg-[#EFF7FF] p-3 text-xs leading-5 text-[#426E98]">Demonstration only: this does not verify patient identity, notify a clinician, begin an encounter or save to a secure server.</p>
      <div className="mt-5 flex flex-wrap gap-2"><button type="button" className="emr-secondary" onClick={()=>setConfirmCheckIn(false)}>Go back</button><button type="button" autoFocus className="emr-primary" onClick={checkInDemo} disabled={!canCheckIn}><CheckCircle2 size={16}/>Confirm demo check-in</button></div>
     </section>
    </div>:null}
