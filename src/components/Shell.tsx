@@ -2,9 +2,10 @@
 import Link from "next/link";
 import {usePathname} from "next/navigation";
 import {useEffect,useRef,useState,type ReactNode} from "react";
-import {LayoutDashboard,Users,CalendarDays,ClipboardPlus,FlaskConical,Eye,Smile,Wallet,ChartNoAxesCombined,Settings,Search,ChevronDown,ShieldCheck,LogOut,HelpCircle,MoreHorizontal,UserRound} from "lucide-react";
+import {LayoutDashboard,Users,CalendarDays,ClipboardPlus,FlaskConical,Eye,Smile,Wallet,ChartNoAxesCombined,Settings,ChevronDown,ShieldCheck,LogOut,HelpCircle,MoreHorizontal,UserRound} from "lucide-react";
 import type {LucideIcon} from "lucide-react";
 import {EmrBrand} from "./EmrBrand";
+import {GlobalSearch} from "./GlobalSearch";
 const primary:[string,string,LucideIcon][]=[
  ["Overview","/dashboard",LayoutDashboard],["Patients","/dashboard/patients",Users],["Appointments","/dashboard/appointments",CalendarDays],["Encounters","/dashboard/encounters",ClipboardPlus],["Laboratory","/dashboard/laboratory",FlaskConical],["Eye care","/dashboard/eye-care",Eye],["Dental care","/dashboard/dental",Smile],["Billing","/dashboard/billing",Wallet],["Reports","/dashboard/reports",ChartNoAxesCombined]
 ];
@@ -36,9 +37,7 @@ export function Shell({children}:{children:ReactNode}){
  <div className="flex min-h-dvh min-w-0 flex-1 flex-col lg:h-full lg:min-h-0 lg:overflow-y-auto">
   <header className="sticky top-0 z-30 flex h-[68px] shrink-0 items-center justify-between gap-3 border-b border-[#E7EDF4] bg-white px-4 sm:px-6 lg:h-[72px] lg:px-8">
    <div className="flex items-center gap-3">
-    <Link href="/dashboard/patients#patient-search" aria-label="Search patients" className="hidden h-10 w-[310px] items-center gap-2 rounded-xl border border-[#E8EDF4] bg-[#F7F9FC] px-3 transition-colors hover:border-[#BFD7F9] hover:bg-[#EDF5FF] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#0064E0] lg:flex">
-     <Search size={16} className="shrink-0 text-[#7189A5]"/><span className="min-w-0 flex-1 text-xs text-[#607993]">Search patients</span><span className="text-[10px] font-semibold text-[#0064E0]">Open</span>
-    </Link>
+    <GlobalSearch/>
     <span className="text-[13px] font-semibold text-[#18385E] lg:hidden">Octalve EMR</span>
    </div>
    <div className="flex items-center gap-2 sm:gap-4">
