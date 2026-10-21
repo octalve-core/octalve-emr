@@ -4,7 +4,7 @@ export type Appointment={id:string;patientId:string;practitionerId:string;date:s
 export type Encounter={id:string;patientId:string;date:string;clinician:string;reason:string;department:Patient["department"];status:"In progress"|"Completed";soap?:string};
 export type LabRequest={id:string;patientId:string;test:string;orderedBy:string;date:string;status:"Pending"|"In progress"|"Result ready"|"Reviewed";priority:"Routine"|"Urgent"};
 export type Charge={id:string;patientId:string;service:string;date:string;amount:number;status:"Unpaid"|"Paid"|"Part paid"};
-export const facility={id:"fictional-clinic",name:"Octalve Demo Clinic",subtitle:"Eye & Dental Outpatient Centre",location:"Abuja, Nigeria",phone:"000-000-0000"};
+export const facility={id:"fictional-clinic",name:"Octalve Sample Clinic",subtitle:"Eye & Dental Outpatient Centre",location:"Abuja, Nigeria",phone:"000-000-0000"};
 export const doctors=[{id:"dr-amina",name:"Dr Amina Bello",specialty:"Ophthalmology"},{id:"dr-tunde",name:"Dr Tunde Okafor",specialty:"Dentistry"},{id:"dr-sarah",name:"Dr Sarah Musa",specialty:"General Practice"}];
 export const initialPatients:Patient[]=[
  {id:"p1",mrn:"EMR-00001",name:"Amara Eze",age:32,sex:"Female",phone:"0800 000 0101",lastVisit:"2026-10-16",department:"Ophthalmology",status:"Active",allergy:"No known allergies recorded",bloodGroup:"O+",city:"Abuja",email:"amara@example.invalid"},
