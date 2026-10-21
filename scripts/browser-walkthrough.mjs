@@ -16,12 +16,25 @@ page.on('pageerror',e=>errors.push(e.message));
 const pause=async(label)=>{steps.push(label);await page.waitForTimeout(280)};
 const go=async(label,locator)=>{await locator.click({timeout:9000});await pause(label)};
 const bottom=(name)=>page.getByRole('navigation',{name:'Mobile navigation'}).getByRole('link',{name,exact:true});
+const responsive=async(label)=>{
+ for(const width of [320,390,768,1440]){
+  await page.setViewportSize({width,height:844});
+  await page.waitForTimeout(180);
+  const dimensions=await page.evaluate(()=>({document:document.documentElement.scrollWidth,viewport:innerWidth}));
+  if(dimensions.document>dimensions.viewport+3)errors.push(label+' '+width+'px overflow: '+JSON.stringify(dimensions));
+  await page.screenshot({path:out+'/'+label.toLowerCase().replaceAll(' ','-')+'-'+width+'.png',fullPage:true});
+  steps.push(label+' responsive '+width+'px');
+ }
+ await page.setViewportSize({width:390,height:844});
+};
 const more=async(name)=>{await go('Open More',bottom('More'));await go('More → '+name,page.getByRole('main').getByRole('link',{name:new RegExp('^'+name+'\\b')}).first())};
 let result='failed';
 try{
  await page.goto(base,{waitUntil:'domcontentloaded',timeout:30000}); await pause('Open EMR from root address');
  await go('Enter fictional workspace',page.getByRole('link',{name:/Explore fictional demo/i}));
+ await responsive('Dashboard');
  await go('Open patient directory',bottom('Patients'));
+ await responsive('Patient directory');
  await go('Open first patient actions',page.getByRole('button',{name:'Actions for Amara Eze'}).first());
  await go('Open patient edit inner page',page.getByRole('link',{name:/Edit eligible details/}).first());
  await page.getByLabel('Full name').fill('Amara Example'); await pause('Type fictional patient edit');
@@ -47,6 +60,7 @@ try{
  await more('Reports');
  await more('Clinic settings');
  await go('Open staff profile',bottom('Me'));
+ await responsive('Staff profile');
  await go('Open sign-in from profile',page.getByRole('link',{name:/Open sign-in/}));
  await pause('Walkthrough complete');
  const width=await page.evaluate(()=>({document:document.documentElement.scrollWidth,viewport:innerWidth}));if(width.document>width.viewport+3)errors.push(`Page overflow: ${JSON.stringify(width)}`);
