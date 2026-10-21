@@ -6,7 +6,7 @@ const shell=read('src/components/Shell.tsx');
 const workspace=read('src/components/WorkspaceView.tsx');
 const walkthrough=read('scripts/browser-walkthrough.mjs');
 test('header exposes a functional search for sample clinic records',()=>{
- assert.match(shell,/<GlobalSearch\\/>/);
+ assert.ok(shell.includes("<GlobalSearch/>"));
  const search=read('src/components/GlobalSearch.tsx');
  assert.match(search,/role="search"/);
  assert.match(search,/aria-label="Search clinic records"/);
