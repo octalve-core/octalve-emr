@@ -22,8 +22,8 @@ export function MobileRecordCard({
    <span className="emr-mobile-record-icon" aria-hidden="true"><Icon size={19} strokeWidth={1.9}/></span>
    <div className="min-w-0 flex-1">
     <div className="flex min-w-0 flex-wrap items-start justify-between gap-x-3 gap-y-2">
-     <p className="min-w-0 flex-1 break-words text-[12px] font-bold leading-5 text-[#254765]">{title}</p>
-     {aside?<span className="shrink-0 text-[11px] font-bold text-[#23425F]">{aside}</span>:null}
+     <p className="min-w-0 flex-1 break-words text-[12px] font-medium leading-5 text-[#254765]">{title}</p>
+     {aside?<span className="shrink-0 text-[11px] font-medium text-[#23425F]">{aside}</span>:null}
     </div>
     <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1.5">
      <span className="emr-mobile-reference">{reference}</span>
