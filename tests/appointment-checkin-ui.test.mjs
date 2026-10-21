@@ -25,7 +25,7 @@ test('checked-in appointments do not invite duplicate check-in or imply medical 
  assert.match(detail,/updateAppointment\(id,"Checked in"\)/);
  assert.match(detail,/appointment\?\.status==="Checked in"/);
  assert.match(detail,/Checked in \(demo\)/);
- assert.match(detail,/this does not verify a patient's identity/);
+ assert.match(detail,/this does not verify patient identity/);
  assert.doesNotMatch(detail,/fetch\(|localStorage|sessionStorage/);
  assert.match(provider,/useState\(initialAppointments\)/);
  const api=read('app/api/v1/appointments/route.ts');
