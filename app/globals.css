@@ -10,15 +10,15 @@ button{cursor:pointer}
 .emr-input{width:100%;height:43px;border:1px solid #E1E9F1;background:#fff;border-radius:11px;padding:0 12px;font-size:13px;color:#203B5C;outline:none}
 .emr-input:focus,.emr-area:focus{border-color:#0064E0;box-shadow:0 0 0 3px #0064E018}
 .emr-area{width:100%;min-height:90px;border:1px solid #E1E9F1;background:#fff;border-radius:11px;padding:12px;font-size:13px;color:#203B5C;outline:none;resize:vertical}
-.emr-label{display:block;margin-bottom:6px;font-size:11px;font-weight:700;color:#627A91}
-.emr-primary{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:42px;border-radius:11px;background:#0064E0;color:white;padding:0 16px;font-size:12px;font-weight:700;transition:background .18s}
+.emr-label{display:block;margin-bottom:6px;font-size:11px;font-weight:500;color:#627A91}
+.emr-primary{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:42px;border-radius:11px;background:#0064E0;color:white;padding:0 16px;font-size:12px;font-weight:500;transition:background .18s}
 .emr-primary:hover{background:#0052B8}
-.emr-secondary{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:42px;border:1px solid #E1E8F0;border-radius:11px;background:white;color:#31506E;padding:0 15px;font-size:12px;font-weight:700}
+.emr-secondary{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:42px;border:1px solid #E1E8F0;border-radius:11px;background:white;color:#31506E;padding:0 15px;font-size:12px;font-weight:500}
 .emr-secondary:hover{background:#F4F8FC}
-.emr-th{text-align:left;color:#6D8097;text-transform:uppercase;letter-spacing:.06em;font-size:10px;font-weight:700;padding:13px 17px;background:#F7F9FC}
+.emr-th{text-align:left;color:#6D8097;text-transform:uppercase;letter-spacing:.06em;font-size:10px;font-weight:500;padding:13px 17px;background:#F7F9FC}
 .emr-td{padding:15px 17px;border-bottom:1px solid #F0F3F8;font-size:12px;color:#36516A;vertical-align:middle}
 .emr-table{width:100%;border-collapse:collapse}
-.emr-pill{display:inline-flex;align-items:center;gap:5px;white-space:nowrap;border-radius:999px;padding:6px 9px;font-size:10px;font-weight:700}
+.emr-pill{display:inline-flex;align-items:center;gap:5px;white-space:nowrap;border-radius:999px;padding:6px 9px;font-size:10px;font-weight:500}
 .emr-pill::before{content:"";width:6px;height:6px;border-radius:999px;background:currentColor}
 .emr-pill-green{background:#E9FAF1;color:#188052}
 .emr-pill-blue{background:#EAF3FF;color:#0064E0}
@@ -42,7 +42,7 @@ button{cursor:pointer}
 /* Mobile/tablet clinical record cards — never a horizontally scrollable desktop table. */
 .emr-mobile-record{min-width:0;border:1px solid #EDF0F4;border-radius:15px;background:#F7F8FA;padding:13px 12px;box-shadow:0 1px 0 rgba(10,41,75,.015)}
 .emr-mobile-record-icon{display:grid;place-items:center;flex:none;width:40px;height:40px;border-radius:13px;background:#EAF3FF;color:#0064E0}
-.emr-mobile-reference{display:inline-flex;max-width:100%;overflow-wrap:anywhere;border-radius:999px;background:#FFFFFF;padding:4px 8px;font-size:10px;font-weight:600;color:#7890A7}
+.emr-mobile-reference{display:inline-flex;max-width:100%;overflow-wrap:anywhere;border-radius:999px;background:#FFFFFF;padding:4px 8px;font-size:10px;font-weight:500;color:#7890A7}
 .emr-mobile-record .emr-pill{padding:5px 8px;font-size:10px}
 @media(max-width:359px){.emr-mobile-record{padding:11px 10px}.emr-mobile-record-icon{width:36px;height:36px}}
 
@@ -58,7 +58,7 @@ html,body{background:#fff}
 .emr-action-close{width:32px;height:32px;display:grid;place-items:center;border-radius:9px;color:#7489a0}
 .emr-action-close:hover{background:#f2f5f9}
 .emr-action-items{display:grid;gap:5px;padding-top:9px}
-.emr-action-option{display:flex;align-items:center;gap:12px;width:100%;min-height:46px;border-radius:11px;padding:8px 10px;color:#28435e;text-align:left;font-size:12px;font-weight:650}
+.emr-action-option{display:flex;align-items:center;gap:12px;width:100%;min-height:46px;border-radius:11px;padding:8px 10px;color:#28435e;text-align:left;font-size:12px;font-weight:500}
 .emr-action-option:hover,.emr-action-option:focus-visible{background:#f4f6f9}
 .emr-action-symbol{display:grid;place-items:center;flex:none;width:34px;height:34px;border-radius:11px;background:#e9f2ff;color:#0064e0}
 .emr-action-danger{color:#cb3343}.emr-action-danger .emr-action-symbol{background:#ffebed;color:#cb3343}
@@ -66,9 +66,9 @@ html,body{background:#fff}
 .emr-soft-icon{display:grid;place-items:center;width:44px;height:44px;border-radius:14px;background:#eaf3ff;color:#0064e0}
 .emr-soft-icon.green{background:#dcfae9;color:#14875b}.emr-soft-icon.orange{background:#fff1d9;color:#bf771a}.emr-soft-icon.violet{background:#f2eafa;color:#8256ba}
 .emr-quick-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
-.emr-quick-item{display:flex;align-items:center;flex-direction:column;gap:10px;min-width:0;text-align:center;font-size:11px;font-weight:650;color:#29415b;padding:10px 2px;border-radius:13px}
+.emr-quick-item{display:flex;align-items:center;flex-direction:column;gap:10px;min-width:0;text-align:center;font-size:11px;font-weight:500;color:#29415b;padding:10px 2px;border-radius:13px}
 .emr-quick-item:hover{background:#f5f9ff}
-.emr-record-link{font-weight:700;color:#0064e0;text-decoration:none}
+.emr-record-link{font-weight:500;color:#0064e0;text-decoration:none}
 .emr-record-link:hover{text-decoration:underline}
 @media(max-width:767px){
  .emr-action-overlay{background:#08152c8c;display:flex;align-items:flex-end}
@@ -77,7 +77,14 @@ html,body{background:#fff}
  .emr-action-head{padding:14px 5px 20px}
  .emr-action-option{min-height:59px;margin:3px 0;padding:10px 12px;background:#f7f8fa;font-size:14px}
  .emr-action-option:hover{background:#edf3ff}
- .emr-action-cancel{display:block;width:100%;margin-top:15px;border-radius:28px;border:1px solid #0064e0;padding:15px;font-size:14px;font-weight:700;color:#0064e0}
+ .emr-action-cancel{display:block;width:100%;margin-top:15px;border-radius:28px;border:1px solid #0064e0;padding:15px;font-size:14px;font-weight:500;color:#0064e0}
  .emr-quick-grid{gap:5px}.emr-quick-item{font-size:10px}
  .emr-dialog{border-radius:24px 24px 0 0}
 }
+
+/* E2: separate, consistently aligned desktop status and action columns. */
+.emr-table .emr-actions-cell{width:125px;min-width:125px;text-align:right}
+.emr-table .emr-money{text-align:right;font-variant-numeric:tabular-nums}
+.emr-table .emr-status-cell{white-space:nowrap}
+.emr-table .emr-th:last-child{text-align:right;width:125px;min-width:125px}
+.emr-table .emr-td:last-child{text-align:right;white-space:nowrap}
