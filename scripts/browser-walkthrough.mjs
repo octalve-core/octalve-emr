@@ -38,6 +38,15 @@ try{
  await go('Return to sign in',page.getByRole('link',{name:'Sign in',exact:true}));
  await go('Enter sample workspace',page.getByRole('link',{name:/Explore sample workspace/i}));
  await responsive('Dashboard');
+ await page.setViewportSize({width:1440,height:844});
+ await page.getByRole('searchbox',{name:'Search clinic records'}).fill('Amara');
+ await go('Open patient from global search',page.getByRole('region',{name:'Search results'}).getByRole('link',{name:/Amara Eze/}).first());
+ await go('Return from global patient result',page.getByRole('link',{name:/Back to Patients/i}));
+ await page.setViewportSize({width:390,height:844});
+ await go('Open mobile clinic search',page.getByRole('button',{name:'Open clinic search'}));
+ await page.getByRole('searchbox',{name:'Search clinic records'}).fill('L-1001');
+ await go('Open laboratory result from mobile search',page.getByRole('region',{name:'Search results'}).getByRole('link',{name:/Visual field assessment/}).first());
+ await go('Return from searched laboratory record',page.getByRole('link',{name:/Back to Laboratory/i}));
  await go('Open patient directory',bottom('Patients'));
  await responsive('Patient directory');
  await go('Open first patient actions',page.getByRole('button',{name:'Actions for Amara Eze'}).first());
