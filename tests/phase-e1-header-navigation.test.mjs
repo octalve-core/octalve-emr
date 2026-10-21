@@ -5,11 +5,13 @@ const read=path=>readFileSync(path,'utf8');
 const shell=read('src/components/Shell.tsx');
 const workspace=read('src/components/WorkspaceView.tsx');
 const walkthrough=read('scripts/browser-walkthrough.mjs');
-test('desktop search navigates to a functional patient directory search target',()=>{
- assert.match(shell,/href="\/dashboard\/patients#patient-search"/);
- assert.match(shell,/Search patients/);
- assert.match(workspace,/id=\{screen==="patients"\?"patient-search":undefined\}/);
- assert.match(workspace,/aria-label="Search records"/);
+test('header exposes a functional search for sample clinic records',()=>{
+ assert.match(shell,/<GlobalSearch\\/>/);
+ const search=read('src/components/GlobalSearch.tsx');
+ assert.match(search,/role="search"/);
+ assert.match(search,/aria-label="Search clinic records"/);
+ for(const section of ['patients','appointments','encounters','laboratory','billing'])assert.ok(search.includes('/dashboard/'+section+'/'),section);
+ assert.match(search,/role="region" aria-label="Search results"/);
 });
 test('preview-only header has no dead notification button or redundant mobile profile menu',()=>{
  assert.doesNotMatch(shell,/aria-label="Notifications are a preview"/);
