@@ -31,6 +31,11 @@ const more=async(name)=>{await go('Open More',bottom('More'));await go('More →
 let result='failed';
 try{
  await page.goto(base,{waitUntil:'domcontentloaded',timeout:30000}); await pause('Open EMR from root address');
+ if(await page.locator('header img').count()!==1)throw new Error('Auth header must have a single product logo');
+ await responsive('Login');
+ await go('Open registration screen',page.getByRole('link',{name:'Create an account'}));
+ await responsive('Signup');
+ await go('Return to sign in',page.getByRole('link',{name:'Sign in',exact:true}));
  await go('Enter sample workspace',page.getByRole('link',{name:/Explore sample workspace/i}));
  await responsive('Dashboard');
  await go('Open patient directory',bottom('Patients'));
