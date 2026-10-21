@@ -1,8 +1,8 @@
 "use client";
 import Link from "next/link";
 import {usePathname} from "next/navigation";
-import {useState,type ReactNode} from "react";
-import {LayoutDashboard,Users,CalendarDays,ClipboardPlus,FlaskConical,Eye,Smile,Wallet,ChartNoAxesCombined,Settings,Search,Bell,ChevronDown,ChevronLeft,Menu,Plus,HeartPulse,ShieldCheck,LogOut,HelpCircle,MoreHorizontal,UserRound} from "lucide-react";
+import {useEffect,useRef,useState,type ReactNode} from "react";
+import {LayoutDashboard,Users,CalendarDays,ClipboardPlus,FlaskConical,Eye,Smile,Wallet,ChartNoAxesCombined,Settings,Search,ChevronDown,ShieldCheck,LogOut,HelpCircle,MoreHorizontal,UserRound} from "lucide-react";
 import type {LucideIcon} from "lucide-react";
 import {EmrBrand} from "./EmrBrand";
 const primary:[string,string,LucideIcon][]=[
@@ -12,6 +12,13 @@ const bottom:[string,string,LucideIcon][]=[["Home","/dashboard",LayoutDashboard]
 function isActive(pathname:string,href:string){return href==="/dashboard"?pathname===href:pathname===href||pathname.startsWith(href+"/")}
 export function Shell({children}:{children:ReactNode}){
  const pathname=usePathname();const [showUser,setShowUser]=useState(false);
+ const accountRef=useRef<HTMLDivElement>(null);const accountButtonRef=useRef<HTMLButtonElement>(null);
+ useEffect(()=>{if(!showUser)return;
+  const onKey=(event:KeyboardEvent)=>{if(event.key==="Escape"){setShowUser(false);accountButtonRef.current?.focus()}};
+  const onOutside=(event:PointerEvent)=>{if(event.target instanceof Node&&!accountRef.current?.contains(event.target))setShowUser(false)};
+  document.addEventListener("keydown",onKey);document.addEventListener("pointerdown",onOutside);
+  return()=>{document.removeEventListener("keydown",onKey);document.removeEventListener("pointerdown",onOutside)};
+ },[showUser]);
  return <div className="min-h-dvh bg-white lg:flex lg:h-dvh lg:overflow-hidden">
  <aside className={`hidden lg:flex fixed inset-y-0 left-0 z-50 w-[258px] flex-col bg-[#000A16] text-white transition-transform lg:static lg:h-dvh lg:translate-x-0 `}>
   <div className="flex h-[72px] shrink-0 items-center justify-between border-b border-[#172236] bg-white px-5">
@@ -28,11 +35,30 @@ export function Shell({children}:{children:ReactNode}){
  </aside>
  <div className="flex min-h-dvh min-w-0 flex-1 flex-col lg:h-full lg:min-h-0 lg:overflow-y-auto">
   <header className="sticky top-0 z-30 flex h-[68px] shrink-0 items-center justify-between gap-3 border-b border-[#E7EDF4] bg-white px-4 sm:px-6 lg:h-[72px] lg:px-8">
-   <div className="flex items-center gap-3"><div className="hidden h-10 w-[310px] items-center gap-2 rounded-xl border border-[#E8EDF4] bg-[#F7F9FC] px-3 lg:flex"><Search size={16} className="text-[#8193A9]"/><span className="text-xs text-[#8495A9]">Search patients, visits, appointments</span><kbd className="ml-auto rounded border px-1.5 py-0.5 text-[10px] text-[#9AACC0]">Preview</kbd></div><span className="text-[13px] font-semibold text-[#18385E] lg:hidden">Octalve EMR</span></div>
-   <div className="flex items-center gap-2 sm:gap-4"><span className="hidden items-center gap-1 rounded-full bg-[#E9F4FF] px-3 py-1.5 text-[10px] font-semibold text-[#0064E0] sm:flex"><span className="size-1.5 rounded-full bg-[#0064E0]"/> UI Preview</span><button className="relative grid size-9 place-items-center rounded-xl text-[#697E94] hover:bg-[#F0F5FA]" aria-label="Notifications are a preview" title="Notifications are not connected"><Bell size={19}/><span className="absolute right-2 top-1.5 size-1.5 rounded-full bg-[#0064E0]"/></button><div className="relative"><button className="flex items-center gap-2 rounded-xl p-1 hover:bg-[#F7F9FC]" onClick={()=>setShowUser(x=>!x)} aria-label="Account menu" aria-expanded={showUser}><span className="grid size-9 place-items-center rounded-full bg-[#E4EDFA] text-[11px] font-bold text-[#27537F]">SA</span><div className="hidden text-left sm:block"><p className="text-xs font-semibold text-[#1B334E]">Staff Administrator</p><p className="text-[10px] text-[#8FA0B1]">Fictional account</p></div><ChevronDown size={15} className="hidden text-[#7B90A7] sm:block"/></button>{showUser?<div className="absolute right-0 top-12 w-56 rounded-xl border border-[#EBEEF4] bg-white p-2 shadow-xl"><Link onClick={()=>setShowUser(false)} href="/dashboard/profile" className="block rounded-lg px-3 py-2 text-xs text-[#25405E] hover:bg-[#F5F8FC]">My profile</Link><Link onClick={()=>setShowUser(false)} href="/dashboard/settings" className="block rounded-lg px-3 py-2 text-xs text-[#25405E] hover:bg-[#F5F8FC]">Clinic settings</Link><Link onClick={()=>setShowUser(false)} href="/login" className="block rounded-lg px-3 py-2 text-xs text-[#0064E0] hover:bg-[#F5F8FC]">Sign in preview</Link><p className="px-3 py-2 text-[11px] text-[#8293A7]">Authentication not connected</p></div>:null}</div></div>
+   <div className="flex items-center gap-3">
+    <Link href="/dashboard/patients#patient-search" aria-label="Open the fictional patient directory search" className="hidden h-10 w-[310px] items-center gap-2 rounded-xl border border-[#E8EDF4] bg-[#F7F9FC] px-3 transition-colors hover:border-[#BFD7F9] hover:bg-[#EDF5FF] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#0064E0] lg:flex">
+     <Search size={16} className="shrink-0 text-[#7189A5]"/><span className="min-w-0 flex-1 text-xs text-[#607993]">Search fictional patients</span><span className="text-[10px] font-semibold text-[#0064E0]">Open</span>
+    </Link>
+    <span className="text-[13px] font-semibold text-[#18385E] lg:hidden">Octalve EMR</span>
+   </div>
+   <div className="flex items-center gap-2 sm:gap-4">
+    <span className="inline-flex items-center gap-1.5 rounded-full bg-[#E9F4FF] px-2.5 py-1.5 text-[10px] font-semibold text-[#0064E0] sm:px-3"><span className="size-1.5 rounded-full bg-[#0064E0]"/>Demo only</span>
+    <div ref={accountRef} className="relative hidden lg:block">
+     <button ref={accountButtonRef} type="button" className="flex items-center gap-2 rounded-xl p-1 hover:bg-[#F7F9FC] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#0064E0]" onClick={()=>setShowUser(x=>!x)} aria-label="Account menu" aria-controls="emr-account-menu" aria-expanded={showUser}>
+      <span className="grid size-9 place-items-center rounded-full bg-[#E4EDFA] text-[11px] font-bold text-[#27537F]">SA</span>
+      <span className="text-left"><span className="block text-xs font-semibold text-[#1B334E]">Staff Administrator</span><span className="block text-[10px] text-[#8FA0B1]">Fictional account</span></span><ChevronDown size={15} className="text-[#7B90A7]"/>
+     </button>
+     {showUser?<nav id="emr-account-menu" aria-label="Account options" className="absolute right-0 top-12 z-50 w-56 rounded-xl border border-[#EBEEF4] bg-white p-2 shadow-xl">
+      <Link onClick={()=>setShowUser(false)} href="/dashboard/profile" className="block rounded-lg px-3 py-2 text-xs text-[#25405E] hover:bg-[#F5F8FC]">My profile</Link>
+      <Link onClick={()=>setShowUser(false)} href="/dashboard/settings" className="block rounded-lg px-3 py-2 text-xs text-[#25405E] hover:bg-[#F5F8FC]">Clinic settings</Link>
+      <Link onClick={()=>setShowUser(false)} href="/login" className="block rounded-lg px-3 py-2 text-xs text-[#0064E0] hover:bg-[#F5F8FC]">Sign in preview</Link>
+      <p className="px-3 py-2 text-[11px] text-[#8293A7]">Authentication not connected</p>
+     </nav>:null}
+    </div>
+   </div>
   </header>
   <div className="border-b border-[#CDE5FD] bg-[#EEF7FF] px-4 py-2 text-center text-[11px] font-medium text-[#235E94] sm:px-6">Demonstration only · All patients are fictional · Clinical records are not stored securely · Do not enter real patient information</div>
   <main className="mx-auto w-full max-w-[1570px] flex-1 px-4 pb-28 pt-6 sm:px-6 lg:px-8 lg:pb-9 lg:pt-8">{children}</main>
-  <nav aria-label="Mobile navigation" className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-5 border-t border-[#E9EDF4] bg-white/95 px-1 pt-2 pb-[max(.65rem,env(safe-area-inset-bottom))] shadow-[0_-8px_30px_rgba(14,46,84,.055)] backdrop-blur-xl lg:hidden">{bottom.map(([label,href,Icon])=><Link href={href} key={href} className={`flex min-h-[52px] flex-col items-center justify-center gap-1 rounded-xl px-0.5 text-[10px] ${isActive(pathname,href)?"font-bold text-[#0064E0]":"font-medium text-[#728398]"}`}><span className={`grid h-8 w-10 place-items-center rounded-xl ${isActive(pathname,href)?"bg-[#EAF3FF]":""}`}><Icon size={21}/></span>{label}</Link>)}</nav>
+  <nav aria-label="Mobile navigation" className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-5 border-t border-[#E9EDF4] bg-white/95 px-1 pt-2 pb-[max(.65rem,env(safe-area-inset-bottom))] shadow-[0_-8px_30px_rgba(14,46,84,.055)] backdrop-blur-xl lg:hidden">{bottom.map(([label,href,Icon])=><Link href={href} key={href} aria-current={isActive(pathname,href)?"page":undefined} className={`flex min-h-[52px] flex-col items-center justify-center gap-1 rounded-xl px-0.5 text-[10px] ${isActive(pathname,href)?"font-bold text-[#0064E0]":"font-medium text-[#728398]"}`}><span className={`grid h-8 w-10 place-items-center rounded-xl ${isActive(pathname,href)?"bg-[#EAF3FF]":""}`}><Icon size={21}/></span>{label}</Link>)}</nav>
  </div></div>
 }
